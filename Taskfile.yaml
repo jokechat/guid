@@ -1,9 +1,10 @@
 version: '3'
 
 vars:
+  REPOSITORY_NAME: jokechat
   APP_NAME: guid
-  APP_VERSION: v1.0.1
-  DOCKER_HUB: uhub.service.ucloud.cn
+  APP_VERSION: v1.0.2
+  PRIVATE_DOCKER_HUB: uhub.service.ucloud.cn
 tasks:
   print:
     cmds:
@@ -28,7 +29,7 @@ tasks:
           GOOS: linux,
           GOARCH: arm64
         }
-      - docker build --platform=linux/arm64 --build-arg RELEASE_NAME={{.APP_NAME}}_{{.TASK}}  --tag jokechat/{{.APP_NAME}}-arm64:{{.APP_VERSION}} .
+      - docker build --platform=linux/arm64 --build-arg RELEASE_NAME={{.APP_NAME}}_{{.TASK}}  --tag {{.REPOSITORY_NAME}}/{{.APP_NAME}}-arm64:{{.APP_VERSION}} .
   docker_build_linux_amd64:
     cmds:
       - task: build-tpl
@@ -38,27 +39,27 @@ tasks:
           GOARCH: amd64,
           GOAMD64: v4
         }
-      - docker build --platform=linux/amd64 --build-arg RELEASE_NAME={{.APP_NAME}}_{{.TASK}}  --tag jokechat/{{.APP_NAME}}-amd64:{{.APP_VERSION}} .
+      - docker build --platform=linux/amd64 --build-arg RELEASE_NAME={{.APP_NAME}}_{{.TASK}}  --tag {{.REPOSITORY_NAME}}/{{.APP_NAME}}-amd64:{{.APP_VERSION}} .
 
   docker_build_arm_amd_push:
     cmds:
       - task docker_build_linux_arm64 docker_build_linux_amd64
-      - docker push jokechat/{{.APP_NAME}}-arm64:{{.APP_VERSION}}
-      - docker push jokechat/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
-      - docker manifest create jokechat/{{.APP_NAME}}:{{.APP_VERSION}} jokechat/{{.APP_NAME}}-arm64:{{.APP_VERSION}} jokechat/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
-      - docker manifest push jokechat/{{.APP_NAME}}:{{.APP_VERSION}}
+      - docker push {{.REPOSITORY_NAME}}/{{.APP_NAME}}-arm64:{{.APP_VERSION}}
+      - docker push {{.REPOSITORY_NAME}}/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
+      - docker manifest create {{.REPOSITORY_NAME}}/{{.APP_NAME}}:{{.APP_VERSION}} {{.REPOSITORY_NAME}}/{{.APP_NAME}}-arm64:{{.APP_VERSION}} {{.REPOSITORY_NAME}}/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
+      - docker manifest push {{.REPOSITORY_NAME}}/{{.APP_NAME}}:{{.APP_VERSION}}
   docker_uhub_push:
     cmds:
-      - docker tag jokechat/{{.APP_NAME}}-arm64:{{.APP_VERSION}} {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}-arm64:{{.APP_VERSION}}
-      - docker tag jokechat/{{.APP_NAME}}-amd64:{{.APP_VERSION}} {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
-      - docker push {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}-arm64:{{.APP_VERSION}}
-      - docker push {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
-      - docker manifest create {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}:{{.APP_VERSION}} {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}-arm64:{{.APP_VERSION}} {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
-      - docker manifest push {{.DOCKER_HUB}}/jokechat/{{.APP_NAME}}:{{.APP_VERSION}}
+      - docker tag {{.REPOSITORY_NAME}}/{{.APP_NAME}}-arm64:{{.APP_VERSION}} {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}-arm64:{{.APP_VERSION}}
+      - docker tag {{.REPOSITORY_NAME}}/{{.APP_NAME}}-amd64:{{.APP_VERSION}} {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
+      - docker push {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}-arm64:{{.APP_VERSION}}
+      - docker push {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
+      - docker manifest create {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}:{{.APP_VERSION}} {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}-arm64:{{.APP_VERSION}} {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}-amd64:{{.APP_VERSION}}
+      - docker manifest push {{.PRIVATE_DOCKER_HUB}}/{{.REPOSITORY_NAME}}/{{.APP_NAME}}:{{.APP_VERSION}}
 
   default:
     cmds:
       - task: print
       - task: clean
       - task: docker_build_arm_amd_push
-      - task: docker_uhub_push
+#      - task: docker_uhub_push
