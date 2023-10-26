@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: guid-headless
+spec:
+  clusterIP: None
+  selector:
+    app: guid
+  ports:
+    - port: 80
+      name: tcp
+      targetPort: 80
+      protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: guid
+  labels:
+    app: guid
+spec:
+  selector:
+    matchLabels:
+      app: guid
+  serviceName: guid-headless
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: guid
+    spec:
+      imagePullSecrets:
+        - name: uhub.service.ucloud.cn
+      containers:
+        - name: guid
+          image: "jokechat/guid:v1.0.0"
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              memory: "400Mi"
+              cpu: "200m"
