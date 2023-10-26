@@ -1,0 +1,10 @@
+version: "3"
+services:
+  guid:
+    container_name: guid
+    image: jokechat/guid:v1.0.0
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:80"
+    restart: always
