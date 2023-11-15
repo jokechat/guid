@@ -1,0 +1,12 @@
+FROM --platform=$BUILDPLATFORM golang:1.21.1 as builder
+ARG TARGETARCH
+WORKDIR /app
+COPY ./ ./
+RUN GOOS=$TARGETPLATFORM GOARCH=$TARGETARCH go build -a -o guid main.go
+
+
+FROM alpine:latest
+COPY --from=builder /app/guid /bin/guid
+EXPOSE 80
+EXPOSE 8080
+CMD /bin/guid
