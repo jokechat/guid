@@ -3,7 +3,7 @@ version: '3'
 vars:
   REPOSITORY_NAME: jokechat
   APP_NAME: guid
-  APP_VERSION: v1.0.2
+  APP_VERSION: v1.0.3
   PRIVATE_DOCKER_HUB: uhub.service.ucloud.cn
 tasks:
   print:
