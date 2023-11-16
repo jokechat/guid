@@ -25,7 +25,7 @@ func main() {
 			ID:     id.Uint64(),
 			WorkId: workId,
 			Base32: id.Base32Lower(),
-			Time:   id.Time(w),
+			Time:   id.Time(epoch),
 		}
 
 		result := &common.Result{

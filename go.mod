@@ -5,7 +5,7 @@ go 1.21.1
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gin-gonic/gin v1.9.1
-	github.com/jokechat/snowflake v0.0.0-20231025141847-07be56842ac9
+	github.com/jokechat/snowflake v1.0.0
 )
 
 require (
